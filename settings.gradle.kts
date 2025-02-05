@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Technical test Beefirst"
 include(":app")
- 
+include(":data")
+include(":domain")
+include(":ui")
+include(":core")
