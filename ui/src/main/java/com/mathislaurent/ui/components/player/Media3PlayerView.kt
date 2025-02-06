@@ -31,7 +31,6 @@ fun Media3PlayerView(
 
     DisposableEffect(Unit) {
         onDispose {
-            playerViewModel.savePlayerState()
             playerViewModel.releasePlayer()
         }
     }

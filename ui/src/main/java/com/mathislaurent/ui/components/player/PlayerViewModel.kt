@@ -15,6 +15,7 @@ import androidx.media3.exoplayer.hls.HlsMediaSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,48 +37,44 @@ class PlayerViewModel @Inject constructor(): ViewModel() {
         videoUrl: String,
         type: String
     ) {
-        if (_playerState.value == null) {
-            viewModelScope.launch {
-
-                val exoPlayer = ExoPlayer.Builder(context).build().also {
-                    when (type) {
-                        VideoType.MPEG_URL.mimeType -> {
-                            val hlsDataSourceFactory = DefaultHttpDataSource.Factory()
-                            val uri = Uri.parse(videoUrl)
-                            val hlsMediaItem = MediaItem.Builder().setUri(uri).build()
-                            val mediaSource =
-                                HlsMediaSource.Factory(hlsDataSourceFactory).createMediaSource(hlsMediaItem)
-                            it.setMediaSource(mediaSource)
-                        }
-                        else -> {
-                            val mediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
-                            it.setMediaItem(mediaItem)
-                        }
-                    }
-
-                    it.prepare()
-                    it.playWhenReady = true
-                    it.seekTo(currentPosition)
-                    it.addListener(object : Player.Listener {
-                        override fun onPlayerError(error: PlaybackException) {
-                            handleError(error)
-                        }
-                    })
-                }
-                _playerState.value = exoPlayer
-            }
+        if (_playerState.value != null) {
+            // When we change video id from an already cached video, onDispose is not called (uiState change too fast), that's why we need this check
+            releasePlayer()
         }
-    }
+        viewModelScope.launch {
+            val exoPlayer = ExoPlayer.Builder(context).build().also {
+                when (type) {
+                    VideoType.MPEG_URL.mimeType -> {
+                        val hlsDataSourceFactory = DefaultHttpDataSource.Factory()
+                        val uri = Uri.parse(videoUrl)
+                        val hlsMediaItem = MediaItem.Builder().setUri(uri).build()
+                        val mediaSource =
+                            HlsMediaSource.Factory(hlsDataSourceFactory).createMediaSource(hlsMediaItem)
+                        it.setMediaSource(mediaSource)
+                    }
+                    else -> {
+                        val mediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
+                        it.setMediaItem(mediaItem)
+                    }
+                }
 
-    fun savePlayerState() {
-        _playerState.value?.let {
-            currentPosition = it.currentPosition
+                it.prepare()
+                it.playWhenReady = true
+                it.seekTo(currentPosition)
+                it.addListener(object : Player.Listener {
+                    override fun onPlayerError(error: PlaybackException) {
+                        handleError(error)
+                    }
+                })
+            }
+            _playerState.update { exoPlayer }
         }
     }
 
     fun releasePlayer() {
+        currentPosition = 0L
         _playerState.value?.release()
-        _playerState.value = null
+        _playerState.update { null }
     }
 
     private fun handleError(error: PlaybackException) {
