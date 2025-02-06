@@ -2,6 +2,7 @@ package com.mathislaurent.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
@@ -16,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mathislaurent.ui.components.player.Media3PlayerView
 
 @Composable
 fun MainScreen(
@@ -73,6 +75,15 @@ fun MainContent(
                 },
                 color = if (uiState is MainViewModel.VideoMetadataUiState.Error) Color.Red else Color.Unspecified
             )
+
+            if (uiState is MainViewModel.VideoMetadataUiState.Success) {
+                Media3PlayerView(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    videoUrl = uiState.metadata.autoUrl,
+                    type = uiState.metadata.autoType
+                )
+            }
         }
     }
 }
