@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.mathislaurent.domain.model.VideoMetadataModel
 import com.mathislaurent.domain.usecase.GetVideoMetadataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -23,11 +24,19 @@ class MainViewModel @Inject constructor(
         data class Success(val metadata: VideoMetadataModel): VideoMetadataUiState()
     }
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        viewModelScope.launch {
+            _uiState.update {
+                VideoMetadataUiState.Error(exception.message.orEmpty())
+            }
+        }
+    }
+
     private val _uiState: MutableStateFlow<VideoMetadataUiState> = MutableStateFlow(VideoMetadataUiState.Empty)
     val uiState: StateFlow<VideoMetadataUiState> = _uiState
 
     fun getVideoForId(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             _uiState.update {
                 VideoMetadataUiState.Loading
             }

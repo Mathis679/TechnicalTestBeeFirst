@@ -10,7 +10,9 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -38,12 +40,16 @@ fun MainContent(
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
+
         val idValue = rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue(""))
         }
 
         Column(
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             TextField(
                 value = idValue.value,
@@ -62,10 +68,11 @@ fun MainContent(
                 text = when (uiState) {
                     MainViewModel.VideoMetadataUiState.Loading -> "LOADING..."
                     is MainViewModel.VideoMetadataUiState.Success -> "SUCCESS id: ${uiState.metadata.id}\nurl: ${uiState.metadata.autoUrl}"
-                    else -> "Nothing"
-                }
+                    is MainViewModel.VideoMetadataUiState.Error -> "Error : ${uiState.message}"
+                    else -> ""
+                },
+                color = if (uiState is MainViewModel.VideoMetadataUiState.Error) Color.Red else Color.Unspecified
             )
         }
     }
-
 }
