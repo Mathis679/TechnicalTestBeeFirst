@@ -47,6 +47,15 @@ Chosen UI design pattern is [MVVM](https://developer.android.com/topic/libraries
 
 [Kotlin DSL](https://docs.gradle.org/current/userguide/kotlin_dsl.html) + [Version Catalog .toml](https://docs.gradle.org/current/userguide/version_catalogs.html)
 
+### Security
+
+Obfuscation is performed by R8 and enabled for release build
+
+### Network
+
+To follow the subject constraint, no lib is used to perform API calls. I've created a tools class HttpRequester (data -> network -> tools) to allow developer perform HTTP call easily.
+This HttpRequester is scalable and generic to support different types of data, http method and response (actually, I've only implemented for JSON response and GET method that were necessary for this subject)
+
 ## UI
 
 I decided to do UI part with [Jetpack Compose](https://developer.android.com/jetpack/compose?hl=fr) because it offers powerful tools to implement beautiful UI with less and comprehensive code.
@@ -58,3 +67,18 @@ Theme is designed with [Material3](https://m3.material.io) lib
 ### Media3 ExoPlayer
 
 In order to display the video, I've chosen the [media3 exoplayer lib](https://developer.android.com/media/media3/exoplayer) supported by google
+
+## User Guide
+
+### Installation
+
+1. Clone this Git repository in Android Studio
+2. Run app build in debug or release
+3. Test app
+
+### Features
+
+You can write the id of a dailymotion video and click on the button "validate". App will make a call to the dailymotion API to get the metadata video.
+If an error occurred, the error will be displayed in a Text UI element, otherwise, the video player will be shown and will automatically play the video.
+
+Application supports landscape mode and will display the video in fullscreen or a message if no video is currently displayed.
