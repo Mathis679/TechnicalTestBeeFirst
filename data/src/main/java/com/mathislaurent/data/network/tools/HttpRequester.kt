@@ -1,11 +1,10 @@
 package com.mathislaurent.data.network.tools
 
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
-import kotlin.coroutines.coroutineContext
 
 class HttpRequester private constructor(
     val endpoint: String?,
@@ -14,12 +13,7 @@ class HttpRequester private constructor(
     val dataFormat: DataFormat
 ) {
 
-    @OptIn(ExperimentalStdlibApi::class)
-    suspend inline fun <reified T> request(): T {
-        val dispatcher = coroutineContext[CoroutineDispatcher]
-        if (dispatcher != Dispatchers.IO) {
-            throw HttpException.RequestCallInNonIOContextException
-        }
+    suspend inline fun <reified T> request(): T = withContext(Dispatchers.IO) {
         if (endpoint == null) {
             throw HttpException.MissingEndpointException
         }
@@ -40,18 +34,18 @@ class HttpRequester private constructor(
                 throw HttpException.UnsupportedHttpMethod
             }
         }
-        return parseData(rawData)
+        return@withContext parseData(rawData)
     }
 
-    suspend inline fun <reified T> parseData(rawData: String): T {
-        return when (dataFormat) {
+    suspend inline fun <reified T> parseData(rawData: String): T = withContext(Dispatchers.IO) {
+        when (dataFormat) {
             DataFormat.JSON -> {
                 Gson().fromJson(rawData, T::class.java)
             }
         }
     }
 
-    suspend fun get(): String {
+    suspend fun get(): String = withContext(Dispatchers.IO) {
         var urlStr = endpoint
         if (params?.isNotEmpty() == true) {
             params.forEach { entry ->
@@ -66,7 +60,7 @@ class HttpRequester private constructor(
         connection.doInput = true
         val responseCode = connection.responseCode
         if (responseCode == HttpURLConnection.HTTP_OK) {
-            return connection.inputStream.bufferedReader().use { it.readText() }
+            return@withContext connection.inputStream.bufferedReader().use { it.readText() }
         } else {
             val responseMessage = connection.responseMessage
             throw HttpException.ErrorEndpointException(
@@ -111,6 +105,5 @@ sealed class HttpException(override val message: String? = null): Exception() {
     data object MissingEndpointException: HttpException()
     data class ErrorEndpointException(val responseCode: Int, val responseMessage: String)
         : HttpException("Error HTTP code : $responseCode\nmessage: $responseMessage")
-    data object RequestCallInNonIOContextException: HttpException()
     data object UnsupportedHttpMethod: HttpException()
 }
