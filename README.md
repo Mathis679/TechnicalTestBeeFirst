@@ -53,8 +53,8 @@ Obfuscation is performed by R8 and enabled for release build
 
 ### Network
 
-To follow the subject constraint, no lib is used to perform API calls. I've created a tools class HttpRequester (data -> network -> tools) to allow developer perform HTTP call easily.
-This HttpRequester is scalable and generic to support different types of data, http method and response (actually, I've only implemented for JSON response and GET method that were necessary for this subject)
+To follow the subject constraint, no lib is used to perform API calls. I've created a tools class `HttpRequester` (`data` -> `network` -> `tools`) to allow developer perform HTTP call easily.
+This `HttpRequester` is *scalable* and *generic* to support different types of data, http method and response (actually, I've only implemented for JSON response and GET method that were necessary for this subject)
 
 ## UI
 
@@ -78,7 +78,7 @@ In order to display the video, I've chosen the [media3 exoplayer lib](https://de
 
 ### Features
 
-You can write the id of a dailymotion video and click on the button "validate". App will make a call to the dailymotion API to get the metadata video.
+You can write the `id` of a dailymotion video and click on the button **Validate**. App will make a call to the dailymotion API to get the metadata video.
 If an error occurred, the error will be displayed in a Text UI element, otherwise, the video player will be shown and will automatically play the video.
 
-Application supports landscape mode and will display the video in fullscreen or a message if no video is currently displayed.
+Application supports **landscape mode** and will display the video in fullscreen or a message if no video is currently displayed.
