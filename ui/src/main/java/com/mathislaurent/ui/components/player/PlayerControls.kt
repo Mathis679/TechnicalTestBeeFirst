@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ChevronLeft
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -32,7 +32,7 @@ fun PlayerControls(player: ExoPlayer?) {
             }
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                imageVector = Icons.Filled.ChevronLeft,
                 contentDescription = "Back"
             )
         }
@@ -50,7 +50,7 @@ fun PlayerControls(player: ExoPlayer?) {
 
         IconButton(onClick = { player?.playWhenReady = false }) {
             Icon(
-                imageVector = Icons.Filled.Close,
+                imageVector = Icons.Filled.Pause,
                 contentDescription = "Pause"
             )
         }
@@ -61,7 +61,7 @@ fun PlayerControls(player: ExoPlayer?) {
             }
         ) {
             Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                imageVector = Icons.Filled.ChevronRight,
                 contentDescription = "Forward"
             )
         }
