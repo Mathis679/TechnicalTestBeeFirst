@@ -49,6 +49,7 @@ fun PortraitContent(
             keyboardActions = KeyboardActions(
                 onDone = {
                     focusManager.clearFocus()
+                    onValidateId(idValue.value.text)
                 }
             )
         )
