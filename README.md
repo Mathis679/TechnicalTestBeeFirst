@@ -27,10 +27,10 @@ Modularized kotlin android application based on [Android Developers architecture
 
 ```mermaid
 graph TB
-A[app module (build)] --> B(ui module (lib))
-    B --> C(domain module (lib))
-    C --> D(data module (lib))
-    D --> E(core module (lib))
+A[app module - build] --> B(ui module - lib)
+    B --> C(domain module - lib)
+    C --> D(data module - lib)
+    D --> E(core module - lib)
     B --> E
     C --> E
 ```
