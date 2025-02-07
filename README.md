@@ -56,6 +56,14 @@ Obfuscation is performed by R8 and enabled for release build
 To follow the subject constraint, no lib is used to perform API calls. I've created a tools class `HttpRequester` (`data` -> `network` -> `tools`) to allow developer perform HTTP call easily.
 This `HttpRequester` is *scalable* and *generic* to support different types of data, http method and response (actually, I've only implemented for JSON response and GET method that were necessary for this subject)
 
+## Tests
+
+[Mockk](https://mockk.io) to perform kotlin unit test mocking.
+
+[Turbine](https://github.com/cashapp/turbine) to help tests on flows
+
+[Assertj](https://assertj.github.io/doc/) to make tests assertions
+
 ## UI
 
 I decided to do UI part with [Jetpack Compose](https://developer.android.com/jetpack/compose?hl=fr) because it offers powerful tools to implement beautiful UI with less and comprehensive code.
