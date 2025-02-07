@@ -13,12 +13,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import kotlinx.coroutines.delay
 
 @Composable
 fun Media3PlayerView(
     modifier: Modifier = Modifier,
     videoUrl: String,
     type: String,
+    showControls: Boolean,
+    currentPosition: Long,
+    onCurrentPositionChanged: (position: Long) -> Unit,
     playerViewModel: PlayerViewModel = hiltViewModel()
 ) {
 
@@ -26,7 +30,13 @@ fun Media3PlayerView(
     val player = playerViewModel.playerState.collectAsStateWithLifecycle()
 
     LaunchedEffect(videoUrl) {
-        playerViewModel.initializePlayer(context, videoUrl, type)
+        playerViewModel.initializePlayer(context, videoUrl, type, currentPosition)
+        while (true) {
+            delay(500)
+            player.value?.let {
+                onCurrentPositionChanged(it.currentPosition)
+            }
+        }
     }
 
     DisposableEffect(Unit) {
@@ -39,9 +49,11 @@ fun Media3PlayerView(
         Media3AndroidView(
             player = player.value
         )
-        PlayerControls(
-            player = player.value
-        )
+        if (showControls) {
+            PlayerControls(
+                player = player.value
+            )
+        }
     }
 
 }

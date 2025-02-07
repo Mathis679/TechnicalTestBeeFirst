@@ -25,8 +25,6 @@ class PlayerViewModel @Inject constructor(): ViewModel() {
     private val _playerState = MutableStateFlow<ExoPlayer?>(null)
     val playerState: StateFlow<ExoPlayer?> = _playerState
 
-    private var currentPosition: Long = 0L
-
     enum class VideoType(val mimeType: String) {
         MPEG_URL(mimeType = "application/x-mpegURL")
     }
@@ -35,7 +33,8 @@ class PlayerViewModel @Inject constructor(): ViewModel() {
     fun initializePlayer(
         context: Context,
         videoUrl: String,
-        type: String
+        type: String,
+        currentPosition: Long = 0L
     ) {
         if (_playerState.value != null) {
             // When we change video id from an already cached video, onDispose is not called (uiState change too fast), that's why we need this check
@@ -46,8 +45,7 @@ class PlayerViewModel @Inject constructor(): ViewModel() {
                 when (type) {
                     VideoType.MPEG_URL.mimeType -> {
                         val hlsDataSourceFactory = DefaultHttpDataSource.Factory()
-                        val uri = Uri.parse(videoUrl)
-                        val hlsMediaItem = MediaItem.Builder().setUri(uri).build()
+                        val hlsMediaItem = MediaItem.fromUri(Uri.parse(videoUrl))
                         val mediaSource =
                             HlsMediaSource.Factory(hlsDataSourceFactory).createMediaSource(hlsMediaItem)
                         it.setMediaSource(mediaSource)
@@ -61,18 +59,19 @@ class PlayerViewModel @Inject constructor(): ViewModel() {
                 it.prepare()
                 it.playWhenReady = true
                 it.seekTo(currentPosition)
-                it.addListener(object : Player.Listener {
-                    override fun onPlayerError(error: PlaybackException) {
-                        handleError(error)
+                it.addListener(
+                    object : Player.Listener {
+                        override fun onPlayerError(error: PlaybackException) {
+                            handleError(error)
+                        }
                     }
-                })
+                )
             }
             _playerState.update { exoPlayer }
         }
     }
 
     fun releasePlayer() {
-        currentPosition = 0L
         _playerState.value?.release()
         _playerState.update { null }
     }
