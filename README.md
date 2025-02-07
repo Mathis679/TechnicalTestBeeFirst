@@ -26,12 +26,13 @@
 Modularized kotlin android application based on [Android Developers architecture guidelines](https://developer.android.com/topic/architecture?hl=fr)
 
 ```mermaid
-graph LR
-A(ui module) --> B(domain module)
-    B --> C(data module)
-    C --> D(core module)
-    B --> D
-    A --> D
+graph TB
+A(app module) --> B(ui module)
+    B --> C(domain module)
+    C --> D(data module)
+    D --> E(core module)
+    C --> E
+    C --> E
 ```
 
 ### Dependency injection
