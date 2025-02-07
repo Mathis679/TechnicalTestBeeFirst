@@ -39,8 +39,13 @@ dependencies {
     implementation(libs.gson)
     kapt(libs.hilt.compiler)
     testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.assertj)
+    testImplementation(libs.kotlin.coroutines.test)
+    testImplementation(libs.cash.turbine)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.mockk.android)
 }
 
 // Allow references to generated code
